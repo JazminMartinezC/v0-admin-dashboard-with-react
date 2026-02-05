@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Plus,
   Search,
@@ -196,6 +197,8 @@ function ActionBar({
 // ── Actions dropdown ──
 
 function ActionsDropdown({ folio }: { folio: string }) {
+  const router = useRouter()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -209,7 +212,10 @@ function ActionsDropdown({ folio }: { folio: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem
+          className="gap-2 cursor-pointer"
+          onClick={() => router.push(`/solicitudes/${folio}`)}
+        >
           <Eye className="h-4 w-4" />
           Ver Detalles
         </DropdownMenuItem>
@@ -272,12 +278,15 @@ function DesktopTable({ data }: { data: MiSolicitud[] }) {
 // ── Mobile Cards ──
 
 function MobileCards({ data }: { data: MiSolicitud[] }) {
+  const router = useRouter()
+
   return (
     <div className="md:hidden space-y-2">
       {data.map((solicitud) => (
         <div
           key={solicitud.folio}
           className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted/50 cursor-pointer"
+          onClick={() => router.push(`/solicitudes/${solicitud.folio}`)}
         >
           <div className="min-w-0 flex-1 space-y-2">
             {/* Top: Folio + Estado */}

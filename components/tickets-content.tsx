@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   Plus,
   Search,
@@ -241,6 +242,8 @@ function ActionBar({
 // ── Actions dropdown with icons ──
 
 function ActionsDropdown({ folio }: { folio: string }) {
+  const router = useRouter()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -254,7 +257,10 @@ function ActionsDropdown({ folio }: { folio: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem
+          className="gap-2 cursor-pointer"
+          onClick={() => router.push(`/solicitudes/${folio}`)}
+        >
           <Eye className="h-4 w-4" />
           Ver Detalle
         </DropdownMenuItem>
