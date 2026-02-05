@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Settings } from "lucide-react"
+import { Settings } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,29 +11,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MobileSidebarTrigger } from "@/components/app-sidebar"
+import {
+  MobileSidebarTrigger,
+  DesktopSidebarToggle,
+} from "@/components/app-sidebar"
 
 export function AppHeader() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <MobileSidebarTrigger />
-        <h1 className="text-lg font-semibold text-foreground tracking-tight">
+        <DesktopSidebarToggle />
+        <h1 className="text-lg font-bold text-foreground tracking-tight">
           Soporte Tecnico
         </h1>
       </div>
 
       <div className="flex items-center gap-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative text-muted-foreground hover:text-foreground"
-          aria-label="Notificaciones"
-        >
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
-        </Button>
-
         <Button
           variant="ghost"
           size="icon"
@@ -63,8 +57,12 @@ export function AppHeader() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>
-              <p className="text-sm font-medium text-foreground">Juan Rodriguez</p>
-              <p className="text-xs text-muted-foreground">admin@helpdesk.com</p>
+              <p className="text-sm font-semibold text-foreground">
+                Juan Rodriguez
+              </p>
+              <p className="text-xs text-muted-foreground">
+                admin@helpdesk.com
+              </p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Mi Perfil</DropdownMenuItem>

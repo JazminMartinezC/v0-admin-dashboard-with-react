@@ -1,18 +1,18 @@
 import React from "react"
-import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata, Viewport } from "next"
+import { Nunito } from "next/font/google"
 
-import './globals.css'
+import "./globals.css"
 
-const _inter = Inter({ subsets: ['latin'] })
+const _nunito = Nunito({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'Soporte Tecnico - HelpDesk',
-  description: 'Panel de administracion de soporte tecnico y mesa de ayuda',
+  title: "Soporte Tecnico",
+  description: "Panel de administracion de soporte tecnico y mesa de ayuda",
 }
 
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
+  themeColor: "#ffffff",
 }
 
 export default function RootLayout({

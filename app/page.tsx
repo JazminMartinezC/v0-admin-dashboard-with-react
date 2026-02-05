@@ -1,15 +1,23 @@
-import { AppSidebar } from "@/components/app-sidebar"
+"use client"
+
+import { AppSidebar, SidebarProvider, useSidebar } from "@/components/app-sidebar"
 import { AppHeader } from "@/components/app-header"
 import { TicketsContent } from "@/components/tickets-content"
+import { cn } from "@/lib/utils"
 
-export default function Page() {
+function DashboardShell() {
+  const { collapsed } = useSidebar()
+
   return (
     <div className="min-h-screen bg-muted/40">
-      {/* Desktop sidebar */}
       <AppSidebar />
 
-      {/* Main area offset by sidebar on desktop */}
-      <div className="md:pl-64">
+      <div
+        className={cn(
+          "transition-all duration-300",
+          collapsed ? "md:pl-0" : "md:pl-64"
+        )}
+      >
         <AppHeader />
 
         <main className="p-4 md:p-6 lg:p-8">
@@ -17,5 +25,13 @@ export default function Page() {
         </main>
       </div>
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <SidebarProvider>
+      <DashboardShell />
+    </SidebarProvider>
   )
 }

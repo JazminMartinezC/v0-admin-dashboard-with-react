@@ -1,16 +1,14 @@
 "use client"
 
-import React from "react"
-
-import { useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   Home,
   LayoutDashboard,
   Users,
   Package,
   Monitor,
-  Headphones,
   FileText,
   ClipboardList,
   BarChart3,
@@ -22,6 +20,8 @@ import {
   ChevronDown,
   LogOut,
   Menu,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -38,6 +38,33 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
+
+// ── Sidebar context for desktop collapse ──
+
+interface SidebarContextType {
+  collapsed: boolean
+  setCollapsed: (v: boolean) => void
+}
+
+const SidebarContext = createContext<SidebarContextType>({
+  collapsed: false,
+  setCollapsed: () => {},
+})
+
+export function useSidebar() {
+  return useContext(SidebarContext)
+}
+
+export function SidebarProvider({ children }: { children: React.ReactNode }) {
+  const [collapsed, setCollapsed] = useState(false)
+  return (
+    <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
+      {children}
+    </SidebarContext.Provider>
+  )
+}
+
+// ── Nav data ──
 
 const mainNav = [
   { label: "Inicio", icon: Home, href: "#" },
@@ -64,11 +91,18 @@ const adicionalesNav = [
   { label: "Catalogos", icon: BookOpen, href: "#" },
 ]
 
+// ── Nav item ──
+
 function NavItem({
   item,
   onClick,
 }: {
-  item: { label: string; icon: React.ComponentType<{ className?: string }>; href: string; active?: boolean }
+  item: {
+    label: string
+    icon: React.ComponentType<{ className?: string }>
+    href: string
+    active?: boolean
+  }
   onClick?: () => void
 }) {
   return (
@@ -76,9 +110,9 @@ function NavItem({
       href={item.href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
         item.active
-          ? "bg-foreground text-background"
+          ? "bg-primary text-primary-foreground"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
@@ -87,6 +121,8 @@ function NavItem({
     </Link>
   )
 }
+
+// ── Collapsible group ──
 
 function CollapsibleNavGroup({
   title,
@@ -103,7 +139,7 @@ function CollapsibleNavGroup({
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
         {title}
         <ChevronDown
           className={cn(
@@ -121,16 +157,22 @@ function CollapsibleNavGroup({
   )
 }
 
+// ── Sidebar content (reused for desktop & mobile sheet) ──
+
 function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
   return (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 py-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground">
-          <Headphones className="h-4 w-4 text-background" />
-        </div>
-        <span className="text-lg font-bold tracking-tight text-foreground">
-          HelpDesk
+      <div className="flex h-16 items-center gap-3 px-4">
+        <Image
+          src="/logo.png"
+          alt="Soporte Tecnico logo"
+          width={36}
+          height={36}
+          className="shrink-0"
+        />
+        <span className="text-base font-bold tracking-tight text-foreground">
+          Soporte Tecnico
         </span>
       </div>
 
@@ -175,20 +217,22 @@ function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9">
             <AvatarImage src="/placeholder-avatar.jpg" alt="Juan Rodriguez" />
-            <AvatarFallback className="bg-muted text-foreground text-xs">JR</AvatarFallback>
+            <AvatarFallback className="bg-muted text-foreground text-xs">
+              JR
+            </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-foreground truncate">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold text-foreground">
               Juan Rodriguez
             </p>
-            <p className="text-xs text-muted-foreground truncate">
+            <p className="truncate text-xs text-muted-foreground">
               Administrador
             </p>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-foreground shrink-0"
+            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
             aria-label="Cerrar sesion"
           >
             <LogOut className="h-4 w-4" />
@@ -198,6 +242,8 @@ function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
     </div>
   )
 }
+
+// ── Mobile sidebar trigger (Sheet) ──
 
 export function MobileSidebarTrigger() {
   const [open, setOpen] = useState(false)
@@ -222,9 +268,40 @@ export function MobileSidebarTrigger() {
   )
 }
 
-export function AppSidebar() {
+// ── Desktop sidebar toggle button (goes in header) ──
+
+export function DesktopSidebarToggle() {
+  const { collapsed, setCollapsed } = useSidebar()
+
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border bg-card">
+    <Button
+      variant="ghost"
+      size="icon"
+      className="hidden md:inline-flex text-muted-foreground hover:text-foreground"
+      onClick={() => setCollapsed(!collapsed)}
+      aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+    >
+      {collapsed ? (
+        <PanelLeft className="h-5 w-5" />
+      ) : (
+        <PanelLeftClose className="h-5 w-5" />
+      )}
+    </Button>
+  )
+}
+
+// ── Desktop fixed sidebar ──
+
+export function AppSidebar() {
+  const { collapsed } = useSidebar()
+
+  return (
+    <aside
+      className={cn(
+        "hidden md:flex md:flex-col md:fixed md:inset-y-0 border-r border-border bg-card transition-all duration-300",
+        collapsed ? "md:w-0 md:overflow-hidden md:border-r-0" : "md:w-64"
+      )}
+    >
       <SidebarContent />
     </aside>
   )

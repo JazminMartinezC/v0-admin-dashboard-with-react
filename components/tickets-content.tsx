@@ -1,7 +1,16 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, Search, MoreHorizontal, ChevronRight } from "lucide-react"
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Eye,
+  Pencil,
+  UserPlus,
+  Trash2,
+  Filter,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -39,7 +48,6 @@ interface Ticket {
   fecha: string
   nombre: string
   departamento: string
-  equipo: string
   prioridad: Priority
   estado: Status
 }
@@ -50,7 +58,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-15",
     nombre: "Maria Garcia Lopez",
     departamento: "Recursos Humanos",
-    equipo: "INV-4521",
     prioridad: "Alta",
     estado: "Abierto",
   },
@@ -59,7 +66,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-14",
     nombre: "Carlos Martinez",
     departamento: "Contabilidad",
-    equipo: "INV-3312",
     prioridad: "Media",
     estado: "En Progreso",
   },
@@ -68,7 +74,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-14",
     nombre: "Ana Torres Ruiz",
     departamento: "Sistemas",
-    equipo: "INV-1187",
     prioridad: "Critica",
     estado: "Abierto",
   },
@@ -77,7 +82,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-13",
     nombre: "Luis Hernandez",
     departamento: "Direccion",
-    equipo: "INV-8834",
     prioridad: "Baja",
     estado: "Resuelto",
   },
@@ -86,7 +90,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-12",
     nombre: "Patricia Gomez",
     departamento: "Ventas",
-    equipo: "INV-2209",
     prioridad: "Media",
     estado: "Cerrado",
   },
@@ -95,7 +98,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-11",
     nombre: "Fernando Diaz Mora",
     departamento: "Marketing",
-    equipo: "INV-5567",
     prioridad: "Alta",
     estado: "En Progreso",
   },
@@ -104,7 +106,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-10",
     nombre: "Sofia Ramirez",
     departamento: "Recursos Humanos",
-    equipo: "INV-9901",
     prioridad: "Baja",
     estado: "Resuelto",
   },
@@ -113,7 +114,6 @@ const tickets: Ticket[] = [
     fecha: "2024-12-09",
     nombre: "Roberto Sanchez",
     departamento: "Contabilidad",
-    equipo: "INV-7743",
     prioridad: "Critica",
     estado: "Abierto",
   },
@@ -139,7 +139,7 @@ function PriorityBadge({ priority }: { priority: Priority }) {
   return (
     <Badge
       variant="outline"
-      className={cn("font-medium", priorityConfig[priority])}
+      className={cn("font-semibold", priorityConfig[priority])}
     >
       {priority}
     </Badge>
@@ -150,7 +150,7 @@ function StatusBadge({ status }: { status: Status }) {
   return (
     <Badge
       variant="outline"
-      className={cn("font-medium", statusConfig[status])}
+      className={cn("font-semibold", statusConfig[status])}
     >
       {status}
     </Badge>
@@ -179,16 +179,22 @@ function ActionBar({
             className="pl-9 bg-background"
           />
         </div>
-        <Button className="shrink-0">
+        <Button className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90">
           <Plus className="mr-2 h-4 w-4" />
           Nueva Solicitud
         </Button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
+      {/* Filters with "Filtrado por:" label -- all in one line on mobile */}
+      <div className="flex items-center gap-2 overflow-x-auto">
+        <div className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-muted-foreground">
+          <Filter className="h-4 w-4" />
+          <span className="hidden sm:inline">Filtrado por:</span>
+          <span className="sm:hidden">Filtros:</span>
+        </div>
+
         <Select>
-          <SelectTrigger className="w-[160px] bg-background">
+          <SelectTrigger className="h-9 w-auto min-w-[100px] bg-background text-sm">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>
           <SelectContent>
@@ -201,8 +207,8 @@ function ActionBar({
         </Select>
 
         <Select>
-          <SelectTrigger className="w-[180px] bg-background">
-            <SelectValue placeholder="Departamento" />
+          <SelectTrigger className="h-9 w-auto min-w-[110px] bg-background text-sm">
+            <SelectValue placeholder="Depto." />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todos</SelectItem>
@@ -216,7 +222,7 @@ function ActionBar({
         </Select>
 
         <Select>
-          <SelectTrigger className="w-[160px] bg-background">
+          <SelectTrigger className="h-9 w-auto min-w-[110px] bg-background text-sm">
             <SelectValue placeholder="Prioridad" />
           </SelectTrigger>
           <SelectContent>
@@ -232,6 +238,43 @@ function ActionBar({
   )
 }
 
+// ── Actions dropdown with icons ──
+
+function ActionsDropdown({ folio }: { folio: string }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          aria-label={`Acciones para ${folio}`}
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem className="gap-2">
+          <Eye className="h-4 w-4" />
+          Ver Detalle
+        </DropdownMenuItem>
+        <DropdownMenuItem className="gap-2">
+          <Pencil className="h-4 w-4" />
+          Editar
+        </DropdownMenuItem>
+        <DropdownMenuItem className="gap-2">
+          <UserPlus className="h-4 w-4" />
+          Asignar
+        </DropdownMenuItem>
+        <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
+          <Trash2 className="h-4 w-4" />
+          Eliminar
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 // ── Desktop Table ──
 
 function DesktopTable({ data }: { data: Ticket[] }) {
@@ -240,22 +283,19 @@ function DesktopTable({ data }: { data: Ticket[] }) {
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead className="w-[130px]">Folio</TableHead>
-            <TableHead className="w-[100px]">Fecha</TableHead>
-            <TableHead>Nombre Afectado</TableHead>
+            <TableHead className="w-[140px]">Folio</TableHead>
+            <TableHead className="w-[110px]">Fecha</TableHead>
+            <TableHead>Nombre del Afectado</TableHead>
             <TableHead>Departamento</TableHead>
-            <TableHead>Equipo (No. Inv.)</TableHead>
-            <TableHead>Prioridad</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead className="w-[60px]">
-              <span className="sr-only">Acciones</span>
-            </TableHead>
+            <TableHead className="w-[100px]">Prioridad</TableHead>
+            <TableHead className="w-[120px]">Estado</TableHead>
+            <TableHead className="w-[70px] text-center">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((ticket) => (
             <TableRow key={ticket.folio}>
-              <TableCell className="font-medium text-foreground">
+              <TableCell className="font-semibold text-foreground">
                 {ticket.folio}
               </TableCell>
               <TableCell className="text-muted-foreground">
@@ -265,36 +305,14 @@ function DesktopTable({ data }: { data: Ticket[] }) {
               <TableCell className="text-muted-foreground">
                 {ticket.departamento}
               </TableCell>
-              <TableCell className="text-muted-foreground font-mono text-xs">
-                {ticket.equipo}
-              </TableCell>
               <TableCell>
                 <PriorityBadge priority={ticket.prioridad} />
               </TableCell>
               <TableCell>
                 <StatusBadge status={ticket.estado} />
               </TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                      aria-label={`Acciones para ${ticket.folio}`}
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Ver Detalle</DropdownMenuItem>
-                    <DropdownMenuItem>Editar</DropdownMenuItem>
-                    <DropdownMenuItem>Asignar</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive focus:text-destructive">
-                      Eliminar
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+              <TableCell className="text-center">
+                <ActionsDropdown folio={ticket.folio} />
               </TableCell>
             </TableRow>
           ))}
@@ -304,7 +322,7 @@ function DesktopTable({ data }: { data: Ticket[] }) {
   )
 }
 
-// ── Mobile Cards (Gmail-style) ──
+// ── Mobile Cards ──
 
 function MobileCards({ data }: { data: Ticket[] }) {
   return (
@@ -319,26 +337,26 @@ function MobileCards({ data }: { data: Ticket[] }) {
             aria-label={`Seleccionar ${ticket.folio}`}
           />
 
-          <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="min-w-0 flex-1 space-y-1.5">
             {/* Top: folio + priority */}
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-mono font-medium text-muted-foreground">
+              <span className="text-xs font-mono font-semibold text-muted-foreground">
                 {ticket.folio}
               </span>
               <PriorityBadge priority={ticket.prioridad} />
             </div>
 
             {/* Name */}
-            <p className="text-sm font-semibold text-foreground truncate">
+            <p className="truncate text-sm font-bold text-foreground">
               {ticket.nombre}
             </p>
 
             {/* Department + Date */}
             <div className="flex items-center justify-between gap-2">
-              <span className="text-xs text-muted-foreground truncate">
+              <span className="truncate text-xs text-muted-foreground">
                 {ticket.departamento}
               </span>
-              <span className="text-xs text-muted-foreground shrink-0">
+              <span className="shrink-0 text-xs text-muted-foreground">
                 {ticket.fecha}
               </span>
             </div>
@@ -349,26 +367,7 @@ function MobileCards({ data }: { data: Ticket[] }) {
             </div>
           </div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
-                aria-label={`Acciones para ${ticket.folio}`}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Ver Detalle</DropdownMenuItem>
-              <DropdownMenuItem>Editar</DropdownMenuItem>
-              <DropdownMenuItem>Asignar</DropdownMenuItem>
-              <DropdownMenuItem className="text-destructive focus:text-destructive">
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ActionsDropdown folio={ticket.folio} />
         </div>
       ))}
     </div>
@@ -393,7 +392,9 @@ export function TicketsContent() {
 
       {/* Results count */}
       <p className="text-sm text-muted-foreground">
-        {filteredTickets.length} solicitud{filteredTickets.length !== 1 ? "es" : ""} encontrada{filteredTickets.length !== 1 ? "s" : ""}
+        {filteredTickets.length} solicitud
+        {filteredTickets.length !== 1 ? "es" : ""} encontrada
+        {filteredTickets.length !== 1 ? "s" : ""}
       </p>
 
       {/* Desktop table */}
