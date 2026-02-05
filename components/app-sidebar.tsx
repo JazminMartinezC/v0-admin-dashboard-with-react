@@ -80,8 +80,8 @@ const mainNav: NavItemData[] = [
 ]
 
 const inventariosNav: NavItemData[] = [
-  { label: "Materiales", icon: Package, href: "#" },
-  { label: "Equipos", icon: Monitor, href: "#" },
+  { label: "Materiales", icon: Package, href: "/inventarios" },
+  { label: "Equipos", icon: Monitor, href: "/inventarios" },
 ]
 
 const mesaAyudaNav: NavItemData[] = [
@@ -195,6 +195,7 @@ function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
           <CollapsibleNavGroup
             title="Inventarios"
             items={inventariosNav}
+            defaultOpen
             onItemClick={onItemClick}
           />
         </div>
