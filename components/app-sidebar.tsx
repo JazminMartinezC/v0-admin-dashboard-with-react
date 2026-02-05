@@ -110,9 +110,9 @@ function NavItem({
       href={item.href}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
         item.active
-          ? "bg-primary text-primary-foreground"
+          ? "bg-primary/10 text-primary font-semibold"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
@@ -139,7 +139,7 @@ function CollapsibleNavGroup({
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground/70 hover:text-muted-foreground transition-colors">
         {title}
         <ChevronDown
           className={cn(
@@ -298,7 +298,7 @@ export function AppSidebar() {
   return (
     <aside
       className={cn(
-        "hidden md:flex md:flex-col md:fixed md:inset-y-0 border-r border-border bg-card transition-all duration-300",
+        "hidden md:flex md:flex-col md:fixed md:inset-y-0 border-r border-border bg-card shadow-sm transition-all duration-300",
         collapsed ? "md:w-0 md:overflow-hidden md:border-r-0" : "md:w-64"
       )}
     >

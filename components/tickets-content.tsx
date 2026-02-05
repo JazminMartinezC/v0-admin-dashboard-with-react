@@ -179,7 +179,7 @@ function ActionBar({
             className="pl-9 bg-background"
           />
         </div>
-        <Button className="shrink-0 bg-primary text-primary-foreground hover:bg-primary/90">
+        <Button className="shrink-0 rounded-lg bg-primary text-primary-foreground shadow-sm hover:bg-primary/90">
           <Plus className="mr-2 h-4 w-4" />
           Nueva Solicitud
         </Button>
@@ -279,7 +279,7 @@ function ActionsDropdown({ folio }: { folio: string }) {
 
 function DesktopTable({ data }: { data: Ticket[] }) {
   return (
-    <div className="hidden md:block rounded-lg border border-border bg-card">
+    <div className="hidden md:block rounded-xl border border-border bg-card shadow-sm">
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
@@ -330,7 +330,7 @@ function MobileCards({ data }: { data: Ticket[] }) {
       {data.map((ticket) => (
         <div
           key={ticket.folio}
-          className="flex items-start gap-3 rounded-lg border border-border bg-card p-4 transition-colors hover:bg-muted/50"
+          className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted/50"
         >
           <Checkbox
             className="mt-1 shrink-0"

@@ -4,7 +4,11 @@ import { Nunito } from "next/font/google"
 
 import "./globals.css"
 
-const _nunito = Nunito({ subsets: ["latin"] })
+const _nunito = Nunito({
+  subsets: ["latin"],
+  variable: "--font-nunito",
+  weight: ["300", "400", "500", "600", "700"],
+})
 
 export const metadata: Metadata = {
   title: "Soporte Tecnico",
@@ -22,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className="font-sans antialiased">{children}</body>
+      <body className={`${_nunito.variable} font-sans antialiased`}>{children}</body>
     </html>
   )
 }
