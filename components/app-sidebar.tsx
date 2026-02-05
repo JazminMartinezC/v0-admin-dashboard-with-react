@@ -87,15 +87,15 @@ const inventariosNav: NavItemData[] = [
 const mesaAyudaNav: NavItemData[] = [
   { label: "Mis Solicitudes", icon: FileText, href: "#" },
   { label: "Solicitudes", icon: ClipboardList, href: "/" },
-  { label: "Reportes", icon: BarChart3, href: "#" },
+  { label: "Reportes", icon: BarChart3, href: "/reportes" },
 ]
 
 const adicionalesNav: NavItemData[] = [
-  { label: "Departamentos", icon: Building2, href: "#" },
-  { label: "Etiquetas", icon: Tags, href: "#" },
-  { label: "Periodo", icon: CalendarDays, href: "#" },
+  { label: "Departamentos", icon: Building2, href: "/adicionales" },
+  { label: "Etiquetas", icon: Tags, href: "/adicionales" },
+  { label: "Periodo", icon: CalendarDays, href: "/adicionales" },
   { label: "Responsables equipo", icon: UserCog, href: "#" },
-  { label: "Catalogos", icon: BookOpen, href: "#" },
+  { label: "Catalogos", icon: BookOpen, href: "/adicionales" },
 ]
 
 // ── Nav item ──
