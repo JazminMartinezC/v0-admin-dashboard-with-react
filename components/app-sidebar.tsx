@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 import {
   Home,
   LayoutDashboard,
@@ -66,24 +67,30 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
 
 // ── Nav data ──
 
-const mainNav = [
+interface NavItemData {
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  href: string
+}
+
+const mainNav: NavItemData[] = [
   { label: "Inicio", icon: Home, href: "#" },
-  { label: "Dashboard", icon: LayoutDashboard, href: "#", active: true },
-  { label: "Usuarios", icon: Users, href: "#" },
+  { label: "Dashboard", icon: LayoutDashboard, href: "/" },
+  { label: "Usuarios", icon: Users, href: "/usuarios/registrar" },
 ]
 
-const inventariosNav = [
+const inventariosNav: NavItemData[] = [
   { label: "Materiales", icon: Package, href: "#" },
   { label: "Equipos", icon: Monitor, href: "#" },
 ]
 
-const mesaAyudaNav = [
+const mesaAyudaNav: NavItemData[] = [
   { label: "Mis Solicitudes", icon: FileText, href: "#" },
-  { label: "Solicitudes", icon: ClipboardList, href: "#", active: true },
+  { label: "Solicitudes", icon: ClipboardList, href: "/" },
   { label: "Reportes", icon: BarChart3, href: "#" },
 ]
 
-const adicionalesNav = [
+const adicionalesNav: NavItemData[] = [
   { label: "Departamentos", icon: Building2, href: "#" },
   { label: "Etiquetas", icon: Tags, href: "#" },
   { label: "Periodo", icon: CalendarDays, href: "#" },
@@ -97,21 +104,21 @@ function NavItem({
   item,
   onClick,
 }: {
-  item: {
-    label: string
-    icon: React.ComponentType<{ className?: string }>
-    href: string
-    active?: boolean
-  }
+  item: NavItemData
   onClick?: () => void
 }) {
+  const pathname = usePathname()
+  const isActive =
+    item.href !== "#" &&
+    (pathname === item.href || pathname.startsWith(item.href + "/"))
+
   return (
     <Link
       href={item.href}
       onClick={onClick}
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-        item.active
+        isActive
           ? "bg-primary/10 text-primary font-semibold"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
@@ -131,7 +138,7 @@ function CollapsibleNavGroup({
   onItemClick,
 }: {
   title: string
-  items: typeof inventariosNav
+  items: NavItemData[]
   defaultOpen?: boolean
   onItemClick?: () => void
 }) {
