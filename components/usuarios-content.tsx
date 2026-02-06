@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   Plus,
   Search,
@@ -223,6 +224,8 @@ function ActionBar({
 // ── Actions dropdown ──
 
 function ActionsDropdown({ userId }: { userId: string }) {
+  const router = useRouter()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -236,7 +239,10 @@ function ActionsDropdown({ userId }: { userId: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem
+          className="gap-2 cursor-pointer"
+          onClick={() => router.push(`/usuarios/${userId}`)}
+        >
           <Eye className="h-4 w-4" />
           Ver Detalles
         </DropdownMenuItem>
