@@ -76,7 +76,7 @@ interface NavItemData {
 const mainNav: NavItemData[] = [
   { label: "Inicio", icon: Home, href: "#" },
   { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { label: "Usuarios", icon: Users, href: "/usuarios/registrar" },
+  { label: "Usuarios", icon: Users, href: "/usuarios" },
 ]
 
 const inventariosNav: NavItemData[] = [
