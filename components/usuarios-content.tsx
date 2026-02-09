@@ -332,9 +332,11 @@ function ActionsDropdown({ usuario }: { usuario: Usuario }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="gap-2">
-          <Eye className="h-4 w-4" />
-          Ver Detalles
+        <DropdownMenuItem className="gap-2" asChild>
+          <Link href={`/usuarios/${usuario.id}`}>
+            <Eye className="h-4 w-4" />
+            Ver Detalles
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="gap-2">
           <Pencil className="h-4 w-4" />
