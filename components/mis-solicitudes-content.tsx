@@ -4,12 +4,12 @@ import { useState } from "react"
 import Link from "next/link"
 import {
   Search,
-  Filter,
   Eye,
   FileText,
   Clock,
   CheckCircle2,
   AlertCircle,
+  MoreHorizontal,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -40,20 +40,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 // ── Types ──
 
-type Estatusolicitud = "Pendiente" | "En Proceso" | "Completada" | "Rechazada"
+type EstadoSolicitud = "Pendiente" | "En Proceso" | "Completada" | "Rechazada"
+type TipoProblema = "Red" | "Mantenimiento" | "Sistema"
 type TipoSolicitud = "Soporte Técnico" | "Mantenimiento" | "Solicitud de Equipo"
+type Estatusolicitud = EstadoSolicitud
 
 interface Solicitud {
   id: string
   folio: string
+  nombreAfectado: string
+  tipoProblema: TipoProblema
+  estado: EstadoSolicitud
+  fechaSolicitud: string
+  prioridad: string
+  tipoSolicitud: TipoSolicitud
   titulo: string
   descripcion: string
-  departamento: string
-  tipoSolicitud: TipoSolicitud
-  estado: Estatusolicitud
-  fechaSolicitud: string
-  fechaActualizacion: string
-  prioridad: "Baja" | "Media" | "Alta"
 }
 
 // ── Sample data ──
@@ -62,68 +64,68 @@ const misSolicitudes: Solicitud[] = [
   {
     id: "SOL-001",
     folio: "SOL-2024-001",
-    titulo: "Reparación de impresora",
-    descripcion: "La impresora del departamento no enciende",
-    departamento: "Recursos Humanos",
-    tipoSolicitud: "Mantenimiento",
+    nombreAfectado: "Juan López García",
+    tipoProblema: "Mantenimiento",
     estado: "En Proceso",
     fechaSolicitud: "2024-12-15",
-    fechaActualizacion: "2024-12-18",
-    prioridad: "Alta",
+    prioridad: "Media",
+    tipoSolicitud: "Mantenimiento",
+    titulo: "Mantenimiento de Equipo",
+    descripcion: "Se necesita mantenimiento preventivo en el servidor.",
   },
   {
     id: "SOL-002",
     folio: "SOL-2024-002",
-    titulo: "Solicitud de nuevo monitor",
-    descripcion: "Se requiere un monitor de 27 pulgadas para la estación de trabajo",
-    departamento: "Recursos Humanos",
-    tipoSolicitud: "Solicitud de Equipo",
+    nombreAfectado: "María Rodríguez",
+    tipoProblema: "Sistema",
     estado: "Pendiente",
     fechaSolicitud: "2024-12-16",
-    fechaActualizacion: "2024-12-16",
-    prioridad: "Media",
+    prioridad: "Alta",
+    tipoSolicitud: "Soporte Técnico",
+    titulo: "Error en Sistema",
+    descripcion: "El sistema está presentando errores recurrentes.",
   },
   {
     id: "SOL-003",
     folio: "SOL-2024-003",
-    titulo: "Problemas de conectividad",
-    descripcion: "Conexión de red intermitente en la sala de juntas",
-    departamento: "Recursos Humanos",
-    tipoSolicitud: "Soporte Técnico",
+    nombreAfectado: "Carlos Martínez",
+    tipoProblema: "Red",
     estado: "Completada",
     fechaSolicitud: "2024-12-10",
-    fechaActualizacion: "2024-12-13",
-    prioridad: "Alta",
+    prioridad: "Baja",
+    tipoSolicitud: "Solicitud de Equipo",
+    titulo: "Solicitud de Red",
+    descripcion: "Se necesita una nueva conexión de red.",
   },
   {
     id: "SOL-004",
     folio: "SOL-2024-004",
-    titulo: "Instalación de software",
-    descripcion: "Instalar Microsoft Office en 5 computadoras",
-    departamento: "Recursos Humanos",
-    tipoSolicitud: "Soporte Técnico",
+    nombreAfectado: "Ana Fernández",
+    tipoProblema: "Sistema",
     estado: "En Proceso",
     fechaSolicitud: "2024-12-14",
-    fechaActualizacion: "2024-12-17",
     prioridad: "Media",
+    tipoSolicitud: "Soporte Técnico",
+    titulo: "Soporte Técnico",
+    descripcion: "Se necesita soporte técnico urgente.",
   },
   {
     id: "SOL-005",
     folio: "SOL-2024-005",
-    titulo: "Cambio de contraseña",
-    descripcion: "Problemas al acceder al sistema",
-    departamento: "Recursos Humanos",
-    tipoSolicitud: "Soporte Técnico",
+    nombreAfectado: "Pedro Sánchez",
+    tipoProblema: "Red",
     estado: "Rechazada",
     fechaSolicitud: "2024-12-12",
-    fechaActualizacion: "2024-12-14",
-    prioridad: "Baja",
+    prioridad: "Alta",
+    tipoSolicitud: "Mantenimiento",
+    titulo: "Mantenimiento de Red",
+    descripcion: "La solicitud de mantenimiento de red fue rechazada.",
   },
 ]
 
 // ── Helper functions ──
 
-function getEstadoBadge(estado: Estatusolicitud) {
+function getEstadoBadge(estado: EstadoSolicitud) {
   const styles = {
     Pendiente: "bg-yellow-100 text-yellow-800 border-yellow-300",
     "En Proceso": "bg-blue-100 text-blue-800 border-blue-300",
@@ -133,7 +135,7 @@ function getEstadoBadge(estado: Estatusolicitud) {
   return styles[estado] || styles.Pendiente
 }
 
-function getEstadoIcon(estado: Estatusolicitud) {
+function getEstadoIcon(estado: EstadoSolicitud) {
   const iconClass = "h-4 w-4"
   switch (estado) {
     case "Pendiente":
@@ -149,22 +151,31 @@ function getEstadoIcon(estado: Estatusolicitud) {
   }
 }
 
-function getPrioridadBadge(prioridad: string) {
+function getTipoProblemaColor(tipo: TipoProblema) {
   const styles = {
-    Baja: "bg-gray-100 text-gray-800 border-gray-300",
-    Media: "bg-orange-100 text-orange-800 border-orange-300",
-    Alta: "bg-red-100 text-red-800 border-red-300",
+    Red: "bg-indigo-100 text-indigo-800 border-indigo-300",
+    Mantenimiento: "bg-purple-100 text-purple-800 border-purple-300",
+    Sistema: "bg-cyan-100 text-cyan-800 border-cyan-300",
   }
-  return styles[prioridad as keyof typeof styles] || styles.Baja
+  return styles[tipo] || styles.Sistema
 }
 
 function getTipoSolicitudBadge(tipo: TipoSolicitud) {
   const styles = {
-    "Soporte Técnico": "bg-blue-100 text-blue-800 border-blue-300",
-    Mantenimiento: "bg-purple-100 text-purple-800 border-purple-300",
-    "Solicitud de Equipo": "bg-indigo-100 text-indigo-800 border-indigo-300",
+    "Soporte Técnico": "bg-teal-100 text-teal-800 border-teal-300",
+    Mantenimiento: "bg-orange-100 text-orange-800 border-orange-300",
+    "Solicitud de Equipo": "bg-pink-100 text-pink-800 border-pink-300",
   }
   return styles[tipo] || styles["Soporte Técnico"]
+}
+
+function getPrioridadBadge(prioridad: string) {
+  const styles = {
+    Alta: "bg-red-100 text-red-800 border-red-300",
+    Media: "bg-yellow-100 text-yellow-800 border-yellow-300",
+    Baja: "bg-green-100 text-green-800 border-green-300",
+  }
+  return styles[prioridad] || styles.Media
 }
 
 // ── Main component ──
@@ -177,11 +188,11 @@ export function MisSolicitudesContent() {
   const filteredSolicitudes = misSolicitudes.filter((solicitud) => {
     const matchSearch =
       solicitud.folio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      solicitud.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+      solicitud.nombreAfectado.toLowerCase().includes(searchTerm.toLowerCase())
     const matchEstado =
       filterEstado === "Todos" || solicitud.estado === filterEstado
     const matchTipo =
-      filterTipo === "Todos" || solicitud.tipoSolicitud === filterTipo
+      filterTipo === "Todos" || solicitud.tipoProblema === filterTipo
 
     return matchSearch && matchEstado && matchTipo
   })
@@ -189,11 +200,11 @@ export function MisSolicitudesContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mis Solicitudes</h1>
           <p className="text-sm text-muted-foreground">
-            Gestiona tus solicitudes de soporte y mantenimiento
+            Visualiza y gestiona tus solicitudes
           </p>
         </div>
       </div>
@@ -207,7 +218,7 @@ export function MisSolicitudesContent() {
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Folio, título..."
+              placeholder="Folio o nombre afectado..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
@@ -244,11 +255,9 @@ export function MisSolicitudesContent() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Todos">Todos</SelectItem>
-                <SelectItem value="Soporte Técnico">Soporte Técnico</SelectItem>
+                <SelectItem value="Red">Red</SelectItem>
                 <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
-                <SelectItem value="Solicitud de Equipo">
-                  Solicitud de Equipo
-                </SelectItem>
+                <SelectItem value="Sistema">Sistema</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -260,13 +269,12 @@ export function MisSolicitudesContent() {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
-              <TableHead className="w-24">Folio</TableHead>
-              <TableHead>Titulo</TableHead>
-              <TableHead className="w-32">Tipo</TableHead>
-              <TableHead className="w-24">Estado</TableHead>
-              <TableHead className="w-20">Prioridad</TableHead>
+              <TableHead className="w-28">Folio</TableHead>
               <TableHead className="w-32">Fecha Solicitud</TableHead>
-              <TableHead className="w-16 text-center">Accion</TableHead>
+              <TableHead>Nombre del Afectado</TableHead>
+              <TableHead className="w-32">Tipo Problema</TableHead>
+              <TableHead className="w-28">Estado</TableHead>
+              <TableHead className="w-16 text-center">Acción</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -279,15 +287,15 @@ export function MisSolicitudesContent() {
                   <TableCell className="font-mono text-sm font-semibold text-primary">
                     {solicitud.folio}
                   </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {solicitud.fechaSolicitud}
+                  </TableCell>
                   <TableCell className="font-medium text-foreground">
-                    <div className="flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                      <span className="truncate">{solicitud.titulo}</span>
-                    </div>
+                    {solicitud.nombreAfectado}
                   </TableCell>
                   <TableCell>
-                    <Badge className={cn("text-xs", getTipoSolicitudBadge(solicitud.tipoSolicitud))}>
-                      {solicitud.tipoSolicitud}
+                    <Badge className={cn("text-xs", getTipoProblemaColor(solicitud.tipoProblema))}>
+                      {solicitud.tipoProblema}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -298,29 +306,14 @@ export function MisSolicitudesContent() {
                       </Badge>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Badge className={cn("text-xs", getPrioridadBadge(solicitud.prioridad))}>
-                      {solicitud.prioridad}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {solicitud.fechaSolicitud}
-                  </TableCell>
                   <TableCell className="text-center">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                      title="Ver solicitud"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <ActionsDropdown />
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="py-8 text-center">
+                <TableCell colSpan={6} className="py-8 text-center">
                   <div className="flex flex-col items-center gap-2">
                     <FileText className="h-8 w-8 text-muted-foreground/40" />
                     <p className="text-sm text-muted-foreground">
@@ -342,21 +335,14 @@ export function MisSolicitudesContent() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <CardTitle className="text-sm font-bold text-foreground line-clamp-2">
-                      {solicitud.titulo}
-                    </CardTitle>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <p className="text-xs text-muted-foreground font-semibold">
                       {solicitud.folio}
                     </p>
+                    <p className="text-sm font-bold text-foreground mt-1">
+                      {solicitud.nombreAfectado}
+                    </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 shrink-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                    title="Ver solicitud"
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
+                  <ActionsDropdown />
                 </div>
               </CardHeader>
 
@@ -364,51 +350,32 @@ export function MisSolicitudesContent() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-xs text-muted-foreground font-semibold">
-                      Tipo
-                    </p>
-                    <Badge className={cn("mt-1 text-xs", getTipoSolicitudBadge(solicitud.tipoSolicitud))}>
-                      {solicitud.tipoSolicitud}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground font-semibold">
-                      Prioridad
-                    </p>
-                    <Badge className={cn("mt-1 text-xs", getPrioridadBadge(solicitud.prioridad))}>
-                      {solicitud.prioridad}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground font-semibold">
-                      Estado
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      {getEstadoIcon(solicitud.estado)}
-                      <Badge className={cn("text-xs", getEstadoBadge(solicitud.estado))}>
-                        {solicitud.estado}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground font-semibold">
-                      Fecha
+                      Fecha Solicitud
                     </p>
                     <p className="text-xs text-foreground font-semibold mt-1">
                       {solicitud.fechaSolicitud}
                     </p>
                   </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-semibold">
+                      Tipo Problema
+                    </p>
+                    <Badge className={cn("mt-1 text-xs", getTipoProblemaColor(solicitud.tipoProblema))}>
+                      {solicitud.tipoProblema}
+                    </Badge>
+                  </div>
                 </div>
 
                 <div>
                   <p className="text-xs text-muted-foreground font-semibold">
-                    Descripcion
+                    Estado
                   </p>
-                  <p className="text-xs text-foreground mt-1 line-clamp-2">
-                    {solicitud.descripcion}
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    {getEstadoIcon(solicitud.estado)}
+                    <Badge className={cn("text-xs", getEstadoBadge(solicitud.estado))}>
+                      {solicitud.estado}
+                    </Badge>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -425,5 +392,30 @@ export function MisSolicitudesContent() {
         )}
       </div>
     </div>
+  )
+}
+
+// ── Actions Dropdown ──
+
+function ActionsDropdown() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          aria-label="Acciones"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem className="gap-2">
+          <Eye className="h-4 w-4" />
+          Ver Detalles
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
