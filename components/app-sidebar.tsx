@@ -85,7 +85,7 @@ const inventariosNav: NavItemData[] = [
 ]
 
 const mesaAyudaNav: NavItemData[] = [
-  { label: "Mis Solicitudes", icon: FileText, href: "#" },
+  { label: "Mis Solicitudes", icon: FileText, href: "/mis-solicitudes" },
   { label: "Solicitudes", icon: ClipboardList, href: "/" },
   { label: "Reportes", icon: BarChart3, href: "#" },
 ]
