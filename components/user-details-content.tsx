@@ -244,8 +244,8 @@ export function UserDetailsContent({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-6">
-      {/* Header con boton volver */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* Header con botones de accion */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -266,8 +266,8 @@ export function UserDetailsContent({ userId }: { userId: string }) {
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex gap-2">
+        {/* Action buttons - Responsive */}
+        <div className="flex flex-wrap gap-2">
           {!isEditing ? (
             <>
               <Button
@@ -310,7 +310,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
                 }}
               >
                 <X className="h-4 w-4" />
-                Cancelar
+                <span className="hidden sm:inline">Cancelar</span>
               </Button>
               <Button
                 size="sm"
@@ -318,7 +318,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
                 onClick={handleSaveChanges}
               >
                 <Save className="h-4 w-4" />
-                Guardar Cambios
+                <span className="hidden sm:inline">Guardar</span>
               </Button>
             </>
           )}
@@ -326,12 +326,12 @@ export function UserDetailsContent({ userId }: { userId: string }) {
       </div>
 
       {/* Profile Card with Avatar and Basic Info */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-sm">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
           {/* Avatar section */}
           <div className="flex shrink-0 flex-col items-center gap-3">
             <div className="relative">
-              <Avatar className="h-24 w-24 shrink-0">
+              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 shrink-0">
                 <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
                   {getInitials(usuario.nombres, usuario.primerApellido)}
                 </AvatarFallback>
@@ -343,7 +343,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
               )}
             </div>
             <div className="text-center">
-              <p className="text-sm font-bold text-foreground">
+              <p className="text-sm font-bold text-foreground line-clamp-2">
                 {getFullName(editForm)}
               </p>
               <p className="text-xs text-muted-foreground">{editForm.id}</p>
@@ -351,12 +351,12 @@ export function UserDetailsContent({ userId }: { userId: string }) {
           </div>
 
           {/* Info section */}
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 w-full space-y-4">
             {/* Row 1: Email + Phone */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
+              <div className="flex gap-3 sm:gap-2">
+                <Mail className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Correo</p>
                   {isEditing ? (
                     <Input
@@ -374,9 +374,9 @@ export function UserDetailsContent({ userId }: { userId: string }) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
+              <div className="flex gap-3 sm:gap-2">
+                <Phone className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Telefono</p>
                   {isEditing ? (
                     <Input
@@ -397,9 +397,9 @@ export function UserDetailsContent({ userId }: { userId: string }) {
 
             {/* Row 2: Department + User Type */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
+              <div className="flex gap-3 sm:gap-2">
+                <Building2 className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Departamento</p>
                   {isEditing ? (
                     <Input
@@ -417,9 +417,9 @@ export function UserDetailsContent({ userId }: { userId: string }) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
+              <div className="flex gap-3 sm:gap-2">
+                <ShieldCheck className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Tipo</p>
                   <div className="pt-0.5">
                     <TipoUsuarioBadge tipo={editForm.tipoUsuario} />
@@ -430,9 +430,9 @@ export function UserDetailsContent({ userId }: { userId: string }) {
 
             {/* Row 3: Status + Registration date */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <ToggleLeft className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
+              <div className="flex gap-3 sm:gap-2">
+                <ToggleLeft className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Estado</p>
                   <div className="pt-0.5">
                     {isEditing ? (
@@ -461,9 +461,9 @@ export function UserDetailsContent({ userId }: { userId: string }) {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
+              <div className="flex gap-3 sm:gap-2">
+                <Clock className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Fecha Registro</p>
                   <p className="text-sm font-semibold text-foreground">
                     {editForm.fechaRegistro}
@@ -476,12 +476,12 @@ export function UserDetailsContent({ userId }: { userId: string }) {
       </div>
 
       {/* Personal Information Card */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-sm">
         <div className="flex items-center gap-2 pb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0">
             <User className="h-4 w-4 text-primary" />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h2 className="text-sm font-bold text-foreground">
               Informacion Personal
             </h2>
@@ -555,7 +555,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
           {/* Direccion */}
           <div className="space-y-1.5 sm:col-span-2 lg:col-span-3">
             <Label className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-              <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+              <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
               Direccion
             </Label>
             {isEditing ? (
@@ -574,12 +574,12 @@ export function UserDetailsContent({ userId }: { userId: string }) {
       </div>
 
       {/* Account Information Card */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-sm">
         <div className="flex items-center gap-2 pb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0">
             <ShieldCheck className="h-4 w-4 text-primary" />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h2 className="text-sm font-bold text-foreground">
               Informacion de la Cuenta
             </h2>
@@ -595,7 +595,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
           {/* Rol */}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
+              <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
               Rol
             </Label>
             {isEditing ? (
@@ -613,7 +613,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
                 </SelectContent>
               </Select>
             ) : (
-              <p className="text-sm font-semibold text-foreground">
+              <p className="text-sm font-semibold text-foreground capitalize">
                 {editForm.rol || "No asignado"}
               </p>
             )}
@@ -622,7 +622,7 @@ export function UserDetailsContent({ userId }: { userId: string }) {
           {/* Estado */}
           <div className="space-y-1.5">
             <Label className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-              <ToggleLeft className="h-3.5 w-3.5 text-muted-foreground" />
+              <ToggleLeft className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
               Estado de Cuenta
             </Label>
             {isEditing ? (
@@ -651,12 +651,12 @@ export function UserDetailsContent({ userId }: { userId: string }) {
       </div>
 
       {/* Activity Log Card */}
-      <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-sm">
         <div className="flex items-center gap-2 pb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 shrink-0">
             <FileText className="h-4 w-4 text-primary" />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h2 className="text-sm font-bold text-foreground">
               Informacion Adicional
             </h2>
