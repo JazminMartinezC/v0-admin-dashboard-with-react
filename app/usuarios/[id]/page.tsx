@@ -8,9 +8,21 @@ import {
 import { AppHeader } from "@/components/app-header"
 import { UserDetailsContent } from "@/components/user-details-content"
 import { cn } from "@/lib/utils"
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
 
-function UserDetailsShell({ userId }: { userId: string }) {
+function UserDetailsShell({ userId }: { userId: string | null }) {
   const { collapsed } = useSidebar()
+
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Cargando...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,14 +44,18 @@ function UserDetailsShell({ userId }: { userId: string }) {
   )
 }
 
-export default function UserDetailsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  // Handle the async params from Next.js 16
-  const clientParams = params as any
-  const userId = typeof clientParams === "string" ? clientParams : clientParams.id
+export default function UserDetailsPage() {
+  const params = useParams()
+  const [userId, setUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    console.log("[v0] params:", params)
+    if (params?.id) {
+      const id = Array.isArray(params.id) ? params.id[0] : params.id
+      console.log("[v0] userId obtenido de params:", id)
+      setUserId(id)
+    }
+  }, [params])
 
   return (
     <SidebarProvider>

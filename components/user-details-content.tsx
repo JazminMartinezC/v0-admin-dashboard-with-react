@@ -195,17 +195,22 @@ function DeleteUserDialog({
 // ── Main Export ──
 
 export function UserDetailsContent({ userId }: { userId: string }) {
+  console.log("[v0] UserDetailsContent - userId recibido:", userId)
+  console.log("[v0] usuariosData keys:", Object.keys(usuariosData))
+
   const usuario = usuariosData[userId]
+  console.log("[v0] usuario encontrado:", usuario)
+
   const [isEditing, setIsEditing] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [editForm, setEditForm] = useState<Usuario>(usuario)
+  const [editForm, setEditForm] = useState<Usuario | null>(usuario || null)
 
   if (!usuario) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-card py-16">
         <User className="h-10 w-10 text-muted-foreground/40" />
         <p className="mt-3 text-sm font-medium text-muted-foreground">
-          Usuario no encontrado
+          Usuario no encontrado (ID: {userId})
         </p>
         <Button
           variant="ghost"
@@ -217,6 +222,10 @@ export function UserDetailsContent({ userId }: { userId: string }) {
         </Button>
       </div>
     )
+  }
+
+  if (!editForm) {
+    return null
   }
 
   const handleEditChange = (field: keyof Usuario, value: string) => {
