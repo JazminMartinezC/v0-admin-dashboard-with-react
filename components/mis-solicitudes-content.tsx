@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   AlertCircle,
   MoreHorizontal,
+  Plus,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -171,11 +172,12 @@ function getTipoSolicitudBadge(tipo: TipoSolicitud) {
 
 function getPrioridadBadge(prioridad: string) {
   const styles = {
-    Alta: "bg-red-100 text-red-800 border-red-300",
+    Alta: "bg-orange-100 text-orange-800 border-orange-300",
     Media: "bg-yellow-100 text-yellow-800 border-yellow-300",
     Baja: "bg-green-100 text-green-800 border-green-300",
+    Crítica: "bg-red-100 text-red-800 border-red-300",
   }
-  return styles[prioridad] || styles.Media
+  return styles[prioridad as keyof typeof styles] || styles.Media
 }
 
 // ── Main component ──
@@ -198,45 +200,40 @@ export function MisSolicitudesContent() {
   })
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="space-y-4">
+      {/* Header with action button */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mis Solicitudes</h1>
-          <p className="text-sm text-muted-foreground">
-            Visualiza y gestiona tus solicitudes
-          </p>
         </div>
+        <Button className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm w-full sm:w-auto">
+          <Plus className="h-4 w-4" />
+          Hacer Solicitud
+        </Button>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 sm:flex-row sm:items-end sm:gap-3">
-        <div className="flex-1">
-          <label className="text-xs font-semibold text-foreground">
-            Buscar solicitud
-          </label>
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Folio o nombre afectado..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-        </div>
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Buscar solicitudes..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-9 bg-white"
+        />
+      </div>
 
-        <div className="flex gap-2">
-          <div className="min-w-32 sm:min-w-40">
-            <label className="text-xs font-semibold text-foreground">
-              Estado
-            </label>
+      {/* Filters Row */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
+        <span className="text-xs font-semibold text-foreground">Filtrado por:</span>
+        <div className="flex flex-wrap gap-2">
+          <div className="w-32">
             <Select value={filterEstado} onValueChange={setFilterEstado}>
-              <SelectTrigger>
+              <SelectTrigger className="h-8 text-xs bg-white border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Todos">Todos</SelectItem>
+                <SelectItem value="Todos">Estado</SelectItem>
                 <SelectItem value="Pendiente">Pendiente</SelectItem>
                 <SelectItem value="En Proceso">En Proceso</SelectItem>
                 <SelectItem value="Completada">Completada</SelectItem>
@@ -245,16 +242,13 @@ export function MisSolicitudesContent() {
             </Select>
           </div>
 
-          <div className="min-w-32 sm:min-w-40">
-            <label className="text-xs font-semibold text-foreground">
-              Tipo
-            </label>
+          <div className="w-32">
             <Select value={filterTipo} onValueChange={setFilterTipo}>
-              <SelectTrigger>
+              <SelectTrigger className="h-8 text-xs bg-white border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Todos">Todos</SelectItem>
+                <SelectItem value="Todos">Tipo</SelectItem>
                 <SelectItem value="Red">Red</SelectItem>
                 <SelectItem value="Mantenimiento">Mantenimiento</SelectItem>
                 <SelectItem value="Sistema">Sistema</SelectItem>
@@ -264,17 +258,23 @@ export function MisSolicitudesContent() {
         </div>
       </div>
 
+      {/* Count */}
+      <div className="text-sm text-muted-foreground font-semibold">
+        {filteredSolicitudes.length}{" "}
+        {filteredSolicitudes.length === 1 ? "solicitud encontrada" : "solicitudes encontradas"}
+      </div>
+
       {/* Desktop Table View */}
-      <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
+      <div className="hidden overflow-x-auto rounded-lg border border-border bg-white md:block">
         <Table>
-          <TableHeader className="bg-muted/50">
-            <TableRow>
-              <TableHead className="w-28">Folio</TableHead>
-              <TableHead className="w-32">Fecha Solicitud</TableHead>
-              <TableHead>Nombre del Afectado</TableHead>
-              <TableHead className="w-32">Tipo Problema</TableHead>
-              <TableHead className="w-28">Estado</TableHead>
-              <TableHead className="w-16 text-center">Acción</TableHead>
+          <TableHeader className="bg-gray-50 border-b border-border">
+            <TableRow className="hover:bg-gray-50">
+              <TableHead className="text-foreground font-semibold text-xs">Folio</TableHead>
+              <TableHead className="text-foreground font-semibold text-xs">Fecha</TableHead>
+              <TableHead className="text-foreground font-semibold text-xs">Nombre del Afectado</TableHead>
+              <TableHead className="text-foreground font-semibold text-xs">Tipo Problema</TableHead>
+              <TableHead className="text-foreground font-semibold text-xs">Estado</TableHead>
+              <TableHead className="text-foreground font-semibold text-xs text-center">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -282,31 +282,28 @@ export function MisSolicitudesContent() {
               filteredSolicitudes.map((solicitud) => (
                 <TableRow
                   key={solicitud.id}
-                  className="hover:bg-muted/50 transition-colors"
+                  className="hover:bg-gray-50 border-b border-border transition-colors"
                 >
-                  <TableCell className="font-mono text-sm font-semibold text-primary">
+                  <TableCell className="font-mono text-sm font-semibold text-primary py-4">
                     {solicitud.folio}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
+                  <TableCell className="text-sm text-muted-foreground py-4">
                     {solicitud.fechaSolicitud}
                   </TableCell>
-                  <TableCell className="font-medium text-foreground">
+                  <TableCell className="font-medium text-foreground py-4">
                     {solicitud.nombreAfectado}
                   </TableCell>
-                  <TableCell>
-                    <Badge className={cn("text-xs", getTipoProblemaColor(solicitud.tipoProblema))}>
+                  <TableCell className="py-4">
+                    <Badge className={cn("text-xs font-medium", getTipoProblemaColor(solicitud.tipoProblema))}>
                       {solicitud.tipoProblema}
                     </Badge>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {getEstadoIcon(solicitud.estado)}
-                      <Badge className={cn("text-xs", getEstadoBadge(solicitud.estado))}>
-                        {solicitud.estado}
-                      </Badge>
-                    </div>
+                  <TableCell className="py-4">
+                    <Badge className={cn("text-xs font-medium", getEstadoBadge(solicitud.estado))}>
+                      {solicitud.estado}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center py-4">
                     <ActionsDropdown />
                   </TableCell>
                 </TableRow>
@@ -331,7 +328,7 @@ export function MisSolicitudesContent() {
       <div className="space-y-3 md:hidden">
         {filteredSolicitudes.length > 0 ? (
           filteredSolicitudes.map((solicitud) => (
-            <Card key={solicitud.id} className="overflow-hidden">
+            <Card key={solicitud.id} className="overflow-hidden border border-border bg-white">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
@@ -346,11 +343,11 @@ export function MisSolicitudesContent() {
                 </div>
               </CardHeader>
 
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3 pt-0">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-xs text-muted-foreground font-semibold">
-                      Fecha Solicitud
+                      Fecha
                     </p>
                     <p className="text-xs text-foreground font-semibold mt-1">
                       {solicitud.fechaSolicitud}
@@ -358,9 +355,9 @@ export function MisSolicitudesContent() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground font-semibold">
-                      Tipo Problema
+                      Tipo
                     </p>
-                    <Badge className={cn("mt-1 text-xs", getTipoProblemaColor(solicitud.tipoProblema))}>
+                    <Badge className={cn("mt-1 text-xs font-medium", getTipoProblemaColor(solicitud.tipoProblema))}>
                       {solicitud.tipoProblema}
                     </Badge>
                   </div>
@@ -370,18 +367,15 @@ export function MisSolicitudesContent() {
                   <p className="text-xs text-muted-foreground font-semibold">
                     Estado
                   </p>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    {getEstadoIcon(solicitud.estado)}
-                    <Badge className={cn("text-xs", getEstadoBadge(solicitud.estado))}>
-                      {solicitud.estado}
-                    </Badge>
-                  </div>
+                  <Badge className={cn("mt-1 text-xs font-medium", getEstadoBadge(solicitud.estado))}>
+                    {solicitud.estado}
+                  </Badge>
                 </div>
               </CardContent>
             </Card>
           ))
         ) : (
-          <Card>
+          <Card className="border border-border bg-white">
             <CardContent className="flex flex-col items-center justify-center py-12">
               <FileText className="h-8 w-8 text-muted-foreground/40 mb-2" />
               <p className="text-sm text-muted-foreground text-center">
