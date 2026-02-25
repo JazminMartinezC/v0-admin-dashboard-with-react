@@ -76,7 +76,7 @@ interface NavItemData {
 const mainNav: NavItemData[] = [
   { label: "Inicio", icon: Home, href: "#" },
   { label: "Dashboard", icon: LayoutDashboard, href: "/" },
-  { label: "Usuarios", icon: Users, href: "/usuarios/registrar" },
+  { label: "Usuarios", icon: Users, href: "/usuarios" },
 ]
 
 const inventariosNav: NavItemData[] = [
@@ -85,17 +85,17 @@ const inventariosNav: NavItemData[] = [
 ]
 
 const mesaAyudaNav: NavItemData[] = [
-  { label: "Mis Solicitudes", icon: FileText, href: "#" },
+  { label: "Mis Solicitudes", icon: FileText, href: "/mis-solicitudes" },
   { label: "Solicitudes", icon: ClipboardList, href: "/" },
-  { label: "Reportes", icon: BarChart3, href: "#" },
+  { label: "Reportes", icon: BarChart3, href: "/reportes" },
 ]
 
 const adicionalesNav: NavItemData[] = [
-  { label: "Departamentos", icon: Building2, href: "#" },
-  { label: "Etiquetas", icon: Tags, href: "#" },
-  { label: "Periodo", icon: CalendarDays, href: "#" },
+  { label: "Departamentos", icon: Building2, href: "/adicionales" },
+  { label: "Etiquetas", icon: Tags, href: "/adicionales" },
+  { label: "Periodo", icon: CalendarDays, href: "/adicionales" },
   { label: "Responsables equipo", icon: UserCog, href: "#" },
-  { label: "Catalogos", icon: BookOpen, href: "#" },
+  { label: "Catalogos", icon: BookOpen, href: "/adicionales" },
 ]
 
 // ── Nav item ──
